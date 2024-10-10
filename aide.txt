@@ -1,0 +1,35 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    aide.txt                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/10/10 20:51:04 by abelmoha          #+#    #+#              #
+#    Updated: 2024/10/10 21:47:23 by abelmoha         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+-------------------------------
+
+*	creer mes mutex
+*	il faut que je creer mes thread
+*	
+
+
+
+
+--------------------------------
+
+
+chaque thread vient la et passe 
+
+
+mutex lock -> attent si fermer
+la donner
+mutex_unlock
+
+-	dire que la fourchette est un mutex et faut car la fourchette est une donner proteger par un mutex
+
+*	-> pour pouvoir proteger mes fourchette il faudrais initialiser un mutex par fourchette
+
