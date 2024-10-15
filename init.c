@@ -6,7 +6,7 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 21:07:49 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/15 21:19:46 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/15 23:55:07 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,30 +27,63 @@ int	init_data(t_data *data)
 	return (1);
 }
 
-int	init_arg(int argc, char **argv, t_data *data)
+int	init_arg_2(t_data *data, char **argv, int argc)
 {
-	int	i;
-
-	i = 1;
+	if (argc != 5 && argc != 6)
+		return (0);
 	data->nb_philo = ft_atoi(argv[1]);
 	data->time_die = ft_atoi(argv[2]);
 	data->time_eat = ft_atoi(argv[3]);
 	data->time_sleep = ft_atoi(argv[4]);
+	printf("salut");
+	return (1);
+}
+
+int	init_arg(int argc, char **argv, t_data *data)
+{
+	int	i;
+
+	i = 0;
+	if (!init_arg_2(data, argv, argc))
+		return (ft_printf("probleme avec le nombre d'un argument !"), 0);
+	if (data->nb_philo > 200 || data->time_die < 60 || data->time_eat < 60 || data->time_sleep < 60)
+			return (ft_printf("probleme avec le temps d'un argument !"), 0);
 	if (argc == 6)
 		data->nb_eat = ft_atoi(argv[5]);
+	else
+		data->nb_eat = -1;
 	data->mutex = malloc(sizeof(pthread_t) * data->nb_philo);
 	if (data->mutex == NULL)
 		return (0);
-	while (i <= data->nb_philo)//init des mutex------
+	while (i < data->nb_philo)//init des mutex------
 	{
 		pthread_mutex_init(&data->mutex[i], NULL);
 		i++;
 	}
+	pthread_mutex_init(&data->m_write, NULL);
 	return (1);
 }
 
 //./a.out	5 422 355 50 [nb_eat]
-void	init_philopher(t_philo *philo)
+
+
+void	init_philosopher(t_philo *philo)
 {
+	int	i;
 	
+	i = 0;
+	while (i <= philo->data->nb_philo)
+	{
+		philo->id = i;
+		philo->fork = &philo->data->mutex[i];
+		philo->fork_left = &philo->data->mutex[i + 1];
+		i++;
+	}
+	i = 0;
+	while (i <= philo->data->nb_philo)
+	{
+		pthread_create(&philo[i].thread, NULL, ft_routine, philo);
+		i++;
+	}
+	return ;
 }

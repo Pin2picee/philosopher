@@ -1,29 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/10 20:55:29 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/15 23:27:59 by abelmoha         ###   ########.fr       */
+/*   Created: 2024/10/15 22:47:30 by abelmoha          #+#    #+#             */
+/*   Updated: 2024/10/15 23:14:36 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
+void	ft_write_what(char *str, t_philo *philo, int id)
 {
-	t_data *data;
-	
-	
-	if (!init_data(data) || !init_arg(argc, argv, data))
-	{
-		if (data)
-			free(data);
-		ft_printf("----------------");
-		return (1);
-	}
-	init_philosopher(data->philosopher);
-	return (0);
+	pthread_mutex_lock(&philo->data->m_write);
+	ft_printf("%d : %s", philo, philo->id + 1, str);
+	pthread_mutex_unlock(&philo->data->m_write);
+	return ;
 }
