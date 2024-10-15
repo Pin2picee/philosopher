@@ -6,7 +6,7 @@
 #    By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/10 20:51:04 by abelmoha          #+#    #+#              #
-#    Updated: 2024/10/10 21:47:23 by abelmoha         ###   ########.fr        #
+#    Updated: 2024/10/12 17:48:40 by abelmoha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,3 +33,32 @@ mutex_unlock
 
 *	-> pour pouvoir proteger mes fourchette il faudrais initialiser un mutex par fourchette
 
+* -> eviter la concurrence (=tous les philosophes lock leur fourchette et attende une deuxieme pour manger)
+
+la concurrence fait référence à la situation où plusieurs philosophes essaient d'accéder aux ressources (les fourchettes) en même temps. Voici comment cela fonctionne plus en détail :
+
+Mécanisme de Concurrence
+Philosophes : Chaque philosophe doit penser et manger de manière simultanée, ce qui implique que plusieurs philosophes peuvent être en train de "réfléchir" ou "manger" en même temps.
+
+
+
+Prise de Fourchettes :
+
+Pour manger, un philosophe doit prendre deux fourchettes :
+La fourchette à sa gauche.
+La fourchette à sa droite.
+Cela signifie que chaque philosophe doit "verrouiller" (ou "lock") ces deux fourchettes.
+->------------Problèmes de Concurrence----------------<-
+
+Interblocage (Deadlock) :
+			Si tous les philosophes prennent en même temps la fourchette à leur gauche, 
+			aucun d'eux ne pourra prendre la fourchette à leur droite. 
+			Ils se retrouvent donc dans un état d'attente indéfinie,
+ 			car chacun attend la fourchette détenue par le voisin. 
+ 			C'est un exemple classique d'interblocage.
+Famine :
+		Même si un philosophe réussit à obtenir ses fourchettes, 
+		il peut y avoir des situations où certains philosophes 
+		sont constamment en attente et ne réussissent
+	 	jamais à obtenir les fourchettes nécessaires pour manger.
+	  	Cela peut se produire si, par exemple, d'autres philosophes "mangent" plus souvent.
