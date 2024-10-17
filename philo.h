@@ -6,7 +6,7 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 21:04:21 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/15 23:20:51 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/16 21:44:27 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,21 @@
 
 # include "libft/libft.h"
 # include <pthread.h>
+# include <time.h>
+# include <sys/time.h>
 
-# define TAKE_FORK_R "Is taking a right fork !"
-# define TAKE_FORK_L "Is taking a left fork !"
-# define THINK "is thinking"
-# define EAT "is eating"
-# define SLEEP "is sleeping"
+# define TAKE_FORK_R "\x1B[91mIs taking a right fork !\x1B[0m"
+# define TAKE_FORK_L "\x1B[94mIs taking a left fork !\x1B[0m"
+# define THINK "\x1B[1m---🤔is thinking🤔---\x1B[0m"
+# define EAT "\x1B[1m----🍔is eating🍔----\x1B[0m"
+# define SLEEP "\x1B[2mᶻ 𝗓 𐰁😴is sleeping😴ᶻ 𝗓 𐰁\x1B[0m"
 
 struct s_philo;
 
 typedef struct s_data
 {
-	struct s_philo 		*philosopher;
+	pthread_t		moniteur;
+	struct s_philo	*philosopher;
 	pthread_mutex_t	*mutex;
 	pthread_mutex_t m_write;
 	int				nb_philo;
@@ -34,12 +37,15 @@ typedef struct s_data
 	int				time_eat;
 	int				time_sleep;
 	int				nb_eat;
+	long int		start_time;
 }			t_data;
 
 typedef struct s_philo
 {
+	pthread_mutex_t *m_write;
 	pthread_t		thread;
 	int				id;
+	long int		last_time_eat;
 	t_data			*data;
 	pthread_mutex_t *fork;
 	pthread_mutex_t	*fork_left;
@@ -48,13 +54,18 @@ typedef struct s_philo
 /*--------------------INIT------------------------*/
 int	init_arg(int argc, char **argv, t_data *data);
 
-int	init_data(t_data *data);
+int	init_data(t_data **data);
 
 void	init_philosopher(t_philo *philo);
 
+long int get_time(void);
+
 /*-------------------ROUTINE-----------------*/
-void	ft_write_what(char *str, t_philo *philo, int id);
+void	ft_write_what(char *str, t_philo *philo);
 
 void	*ft_routine(void *p);
+
+/*-----------------MONITEUR-------------------*/
+void	*moniteur(void *d);
 
 #endif
