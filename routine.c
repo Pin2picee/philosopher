@@ -6,7 +6,7 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 21:50:11 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/16 21:49:43 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/17 19:40:24 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,46 @@
 
 void	take_fork(t_philo *philo)
 {
-		if ((philo->id + 1) % 2 != 0) // impair
-		{
-			pthread_mutex_lock(philo->fork);
-			ft_write_what(TAKE_FORK_R, philo);
-			pthread_mutex_lock(philo->fork_left);
-			ft_write_what(TAKE_FORK_L, philo);
-		}
-		else
-		{
-			pthread_mutex_lock(philo->fork_left); // pair
-			ft_write_what(TAKE_FORK_L, philo);
-			pthread_mutex_lock(philo->fork);
-			ft_write_what(TAKE_FORK_R, philo);
-		}
+	if ((philo->id + 1) % 2 != 0) // impair
+	{
+		pthread_mutex_lock(philo->fork);
+		ft_write_what(TAKE_FORK_R, philo);
+		pthread_mutex_lock(philo->fork_left);
+		ft_write_what(TAKE_FORK_L, philo);
+	}
+	else
+	{
+		pthread_mutex_lock(philo->fork_left); // pair
+		ft_write_what(TAKE_FORK_L, philo);
+		pthread_mutex_lock(philo->fork);
+		ft_write_what(TAKE_FORK_R, philo);
+	}
+}
+void	ft_last_time_eat(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->mutex_time_eat);
+	philo->last_time_eat = get_time();
+	pthread_mutex_unlock(&philo->data->mutex_time_eat);
 }
 
 void	eat_philo(t_philo *philo)
 {	
 	take_fork(philo);
 	ft_write_what(EAT, philo);
-	philo[philo->id].last_time_eat = get_time();
+	ft_last_time_eat(philo);
 	usleep(philo->data->time_eat * 1000);
-	pthread_mutex_unlock(philo->fork);
-	pthread_mutex_unlock(philo->fork_left);
-}
+	if (philo->id % 2 == 0)
+	{
+		pthread_mutex_unlock(philo->fork);
+		pthread_mutex_unlock(philo->fork_left);
+	}
+	else
+	{
+		pthread_mutex_unlock(philo->fork_left);
+		pthread_mutex_unlock(philo->fork);
+	}
+	}
+
 
 void	sleep_philo(t_philo *philo)
 {
@@ -57,9 +72,17 @@ void	*ft_routine(void *p)
 	i = 0;
 	while (i != philo->data->nb_eat)
 	{
+		pthread_mutex_lock(&philo->data->mutex_flag_die);
+		if (philo->data->flag_die == true)
+		{
+			pthread_mutex_unlock(&philo->data->mutex_flag_die);
+			break;
+		}
+		pthread_mutex_unlock(&philo->data->mutex_flag_die);
 		eat_philo(philo);
 		sleep_philo(philo);
 		i++;
 	}
-	ft_write_what("fini", philo);
+	ft_write_what("\x1b[1mMIAM MIAM, trop bonnnn .[0m", philo);
+	return (NULL);
 }
