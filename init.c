@@ -6,7 +6,7 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 21:07:49 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/16 21:42:16 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/17 18:49:17 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,12 @@ int	init_arg(int argc, char **argv, t_data *data)
 	return (1);
 }
 
-//./a.out	5 422 355 50 [nb_eat]
-
 void	ft_join_thread(t_philo *philo)
 {
 	int	i;
 	
 	i = 0;
+	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
 	while (i < philo->data->nb_philo)
 	{
 		pthread_join(philo[i].thread, NULL);
@@ -95,11 +94,13 @@ void	init_philosopher(t_philo *philo)
 	}
 	i = 0;
 	philo->data->start_time = get_time();
+	pthread_mutex_init(&philo->data->mutex_time_eat, NULL); 
+	pthread_mutex_init(&philo->data->mutex_flag_die, NULL); 
+	philo->data->flag_die = false;
 	while (i < philo->data->nb_philo)
 	{
 		pthread_create(&philo[i].thread, NULL, ft_routine, &philo[i]);
 		i++;
 	}
-	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
 	ft_join_thread(philo);
 }

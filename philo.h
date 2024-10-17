@@ -6,7 +6,7 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 21:04:21 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/16 21:44:27 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/17 19:57:23 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 # include <pthread.h>
 # include <time.h>
 # include <sys/time.h>
+# include <stdbool.h>
 
 # define TAKE_FORK_R "\x1B[91mIs taking a right fork !\x1B[0m"
 # define TAKE_FORK_L "\x1B[94mIs taking a left fork !\x1B[0m"
 # define THINK "\x1B[1m---🤔is thinking🤔---\x1B[0m"
 # define EAT "\x1B[1m----🍔is eating🍔----\x1B[0m"
 # define SLEEP "\x1B[2mᶻ 𝗓 𐰁😴is sleeping😴ᶻ 𝗓 𐰁\x1B[0m"
+# define DIE "\x1B[1m                            OH NOOOOOO IM DIEEEEEEE\x1B[0m"
 
 struct s_philo;
 
@@ -31,6 +33,8 @@ typedef struct s_data
 	pthread_t		moniteur;
 	struct s_philo	*philosopher;
 	pthread_mutex_t	*mutex;
+	pthread_mutex_t mutex_time_eat;
+	pthread_mutex_t mutex_flag_die;
 	pthread_mutex_t m_write;
 	int				nb_philo;
 	int				time_die;
@@ -38,6 +42,7 @@ typedef struct s_data
 	int				time_sleep;
 	int				nb_eat;
 	long int		start_time;
+	bool			flag_die;
 }			t_data;
 
 typedef struct s_philo
