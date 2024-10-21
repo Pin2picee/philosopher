@@ -63,7 +63,7 @@ void	*moniteur(void *d)
 		while (i < data->nb_philo )
 		{
 			pthread_mutex_lock(&data->mutex_time_eat);
-			if ((get_time() - data->philosopher[i].last_time_eat) > (long)data->time_die)
+			if (((int)(get_time() - data->philosopher[i].last_time_eat)) > data->time_die)
 			{
 				pthread_mutex_unlock(&data->mutex_time_eat);
 				ft_write_die(DIE, &data->philosopher[i]);
@@ -72,6 +72,7 @@ void	*moniteur(void *d)
 			pthread_mutex_unlock(&data->mutex_time_eat);
 			i++;
 		}
+		ft_usleep(100);
 	}
 }
 void	ft_usleep(long nb)
