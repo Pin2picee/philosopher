@@ -28,7 +28,7 @@ void	ft_write_what(char *str, t_philo *philo)
 	{
 		pthread_mutex_unlock(&philo->data->mutex_flag_die);
 		pthread_mutex_lock(&philo->data->m_write);
-		printf("🕐\x1B[1;95m%ld\x1B[0m🕐 ----> \x1B[33m%d :\x1B[0m %s\n",(get_time() - philo->data->start_time),  (philo->id + 1), str);
+		printf("🕐\x1B[1;95m%ld\x1B[0m🕐->\x1B[33m%d :\x1B[0m %s\n",(get_time() - philo->data->start_time),  (philo->id + 1), str);
 		pthread_mutex_unlock(&philo->data->m_write);
 	}
 	else
@@ -52,18 +52,18 @@ void	ft_write_die(char *str, t_philo *philo)
 void	*moniteur(void *d)
 {
 	int 	i;
-	int 	j;
 	t_data	*data;
+	int		j = 0;
 	
 	data = (t_data *)d;
 	
 	while(1)
 	{
 		i = 0;
-		while (i < data->nb_philo)
+		while (i < data->nb_philo )
 		{
 			pthread_mutex_lock(&data->mutex_time_eat);
-			if ((int)(get_time() - data->philosopher[i].last_time_eat) > data->time_die)
+			if ((get_time() - data->philosopher[i].last_time_eat) > (long)data->time_die)
 			{
 				pthread_mutex_unlock(&data->mutex_time_eat);
 				ft_write_die(DIE, &data->philosopher[i]);
@@ -74,17 +74,16 @@ void	*moniteur(void *d)
 		}
 	}
 }
-
 void	ft_usleep(long nb)
 {
 	long start;
 	long end;
 
 	start = get_time();
-	end = get_time() + nb;
-	while (start < end)
+	end = start + nb;
+	while (get_time() < end)
 	{
-		
+		usleep(100);
 	}
 	return ;
 }

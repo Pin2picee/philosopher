@@ -66,12 +66,12 @@ void	ft_join_thread(t_philo *philo)
 	int	i;
 	
 	i = 0;
-	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
 	while (i < philo->data->nb_philo)
 	{
 		pthread_join(philo[i].thread, NULL);
 		i++;
 	}
+	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
 	pthread_join(philo->data->moniteur, NULL);
 	return ;
 }

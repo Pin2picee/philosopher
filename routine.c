@@ -41,24 +41,24 @@ void	eat_philo(t_philo *philo)
 	take_fork(philo);
 	ft_write_what(EAT, philo);
 	ft_last_time_eat(philo);
-	usleep(philo->data->time_eat * 1000);
-	if (philo->id % 2 == 0)
+	ft_usleep(philo->data->time_eat);
+	if ((philo->id + 1) % 2 != 0) // impair
 	{
-		pthread_mutex_unlock(philo->fork);
 		pthread_mutex_unlock(philo->fork_left);
+		pthread_mutex_unlock(philo->fork);
 	}
 	else
 	{
-		pthread_mutex_unlock(philo->fork_left);
 		pthread_mutex_unlock(philo->fork);
+		pthread_mutex_unlock(philo->fork_left);
 	}
-	}
+}
 
 
 void	sleep_philo(t_philo *philo)
 {
 	ft_write_what(SLEEP, philo);
-	usleep(philo->data->time_sleep * 1000);
+	ft_usleep(philo->data->time_sleep);
 	ft_write_what(THINK, philo);
 }
 
@@ -83,6 +83,6 @@ void	*ft_routine(void *p)
 		sleep_philo(philo);
 		i++;
 	}
-	ft_write_what("\x1b[1mMIAM MIAM, trop bonnnn .[0m", philo);
+	ft_write_what("\x1b[1mMIAM MIAM, trop bonnnn\x1b[0m", philo);
 	return (NULL);
 }
