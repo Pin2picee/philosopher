@@ -37,21 +37,13 @@ void	ft_last_time_eat(t_philo *philo)
 }
 
 void	eat_philo(t_philo *philo)
-{	
+{
 	take_fork(philo);
 	ft_write_what(EAT, philo);
 	ft_last_time_eat(philo);
 	ft_usleep(philo->data->time_eat);
-	if ((philo->id + 1) % 2 != 0) // impair
-	{
-		pthread_mutex_unlock(philo->fork_left);
-		pthread_mutex_unlock(philo->fork);
-	}
-	else
-	{
-		pthread_mutex_unlock(philo->fork);
-		pthread_mutex_unlock(philo->fork_left);
-	}
+	pthread_mutex_unlock(philo->fork);
+	pthread_mutex_unlock(philo->fork_left);
 }
 
 
@@ -70,6 +62,9 @@ void	*ft_routine(void *p)
 	philo = (t_philo *)p;
 	// chaque philo rentre dans sa fonction routine alterne entre manger et dormir
 	i = 0;
+	philo->last_time_eat = get_time();
+	if ((philo->id % 2) == 0)
+		usleep(philo->data->time_eat);
 	while (i != philo->data->nb_eat)
 	{
 		pthread_mutex_lock(&philo->data->mutex_flag_die);
