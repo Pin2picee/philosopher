@@ -62,9 +62,11 @@ void	*ft_routine(void *p)
 	philo = (t_philo *)p;
 	// chaque philo rentre dans sa fonction routine alterne entre manger et dormir
 	i = 0;
+	pthread_mutex_lock(&philo->data->mutex_time_eat);
 	philo->last_time_eat = get_time();
+	pthread_mutex_unlock(&philo->data->mutex_time_eat);
 	if ((philo->id % 2) == 0)
-		usleep(philo->data->time_eat);
+		ft_usleep(200);
 	while (i != philo->data->nb_eat)
 	{
 		pthread_mutex_lock(&philo->data->mutex_flag_die);

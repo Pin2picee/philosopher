@@ -70,7 +70,7 @@ void	ft_write_what(char *str, t_philo *philo);
 
 void	*ft_routine(void *p);
 
-void	ft_usleep(long nb);
+int	ft_usleep(long int time);
 
 
 /*-----------------MONITEUR-------------------*/

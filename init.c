@@ -66,7 +66,6 @@ void	ft_join_thread(t_philo *philo)
 	int	i;
 	
 	i = 0;
-	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
 	while (i < philo->data->nb_philo)
 	{
 		pthread_join(philo[i].thread, NULL);
@@ -102,5 +101,6 @@ void	init_philosopher(t_philo *philo)
 		pthread_create(&philo[i].thread, NULL, ft_routine, &philo[i]);
 		i++;
 	}
+	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
 	ft_join_thread(philo);
 }

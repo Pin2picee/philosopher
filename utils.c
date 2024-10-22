@@ -52,18 +52,16 @@ void	ft_write_die(char *str, t_philo *philo)
 void	*moniteur(void *d)
 {
 	int 	i;
-	t_data	*data;
-	int		j = 0;
-	
+	t_data	*data;	
 	data = (t_data *)d;
 	
-	while(1)
+	while(1 && data->flag_die == 0)
 	{
 		i = 0;
 		while (i < data->nb_philo )
 		{
 			pthread_mutex_lock(&data->mutex_time_eat);
-			if (((int)(get_time() - data->philosopher[i].last_time_eat)) > data->time_die)
+			if (((int)(get_time() - data->philosopher[i].last_time_eat)) > data->time_die + 5)
 			{
 				pthread_mutex_unlock(&data->mutex_time_eat);
 				ft_write_die(DIE, &data->philosopher[i]);
@@ -71,20 +69,18 @@ void	*moniteur(void *d)
 			}
 			pthread_mutex_unlock(&data->mutex_time_eat);
 			i++;
+			usleep(200);
 		}
-		ft_usleep(100);
 	}
+	return (NULL);
 }
-void	ft_usleep(long nb)
+
+int	ft_usleep(long int time)
 {
-	long start;
-	long end;
+	long int	start;
 
 	start = get_time();
-	end = start + nb;
-	while (get_time() < end)
-	{
-		usleep(100);
-	}
-	return ;
+	while ((get_time() - start) < time)
+		usleep(time / 10);
+	return (0);
 }
