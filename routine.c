@@ -12,8 +12,23 @@
 
 #include "philo.h"
 
+
+int	check_die(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->mutex_flag_die);
+	if (philo->data->flag_die == true)
+	{
+		pthread_mutex_unlock(&philo->data->mutex_flag_die);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->data->mutex_flag_die);
+	return (0);
+}
+
 void	take_fork(t_philo *philo)
 {
+	if (check_die(philo))
+		return ;
 	if ((philo->id + 1) % 2 != 0) // impair
 	{
 		pthread_mutex_lock(philo->fork);
@@ -38,7 +53,15 @@ void	ft_last_time_eat(t_philo *philo)
 
 void	eat_philo(t_philo *philo)
 {
+	if (check_die(philo))
+		return ;
 	take_fork(philo);
+	if (check_die(philo))
+	{
+		pthread_mutex_unlock(philo->fork);
+		pthread_mutex_unlock(philo->fork_left);
+		return ;
+	}
 	ft_write_what(EAT, philo);
 	ft_last_time_eat(philo);
 	ft_usleep(philo->data->time_eat);
@@ -49,9 +72,16 @@ void	eat_philo(t_philo *philo)
 
 void	sleep_philo(t_philo *philo)
 {
+	if (check_die(philo))
+		return ;
 	ft_write_what(SLEEP, philo);
+	if (check_die(philo))
+		return ;
 	ft_usleep(philo->data->time_sleep);
-	ft_write_what(THINK, philo);
+	if (check_die(philo))
+		return ;
+	else
+		ft_write_what(THINK, philo);
 }
 
 void	*ft_routine(void *p)
@@ -69,13 +99,8 @@ void	*ft_routine(void *p)
 		ft_usleep(200);
 	while (i != philo->data->nb_eat)
 	{
-		pthread_mutex_lock(&philo->data->mutex_flag_die);
-		if (philo->data->flag_die == true)
-		{
-			pthread_mutex_unlock(&philo->data->mutex_flag_die);
+		if (check_die(philo))
 			break;
-		}
-		pthread_mutex_unlock(&philo->data->mutex_flag_die);
 		eat_philo(philo);
 		sleep_philo(philo);
 		i++;

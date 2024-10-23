@@ -56,6 +56,8 @@ typedef struct s_philo
 	pthread_mutex_t	*fork_left;
 }			t_philo;
 
+int	check_die(t_philo *philo);
+
 /*--------------------INIT------------------------*/
 int	init_arg(int argc, char **argv, t_data *data);
 
@@ -71,7 +73,6 @@ void	ft_write_what(char *str, t_philo *philo);
 void	*ft_routine(void *p);
 
 int	ft_usleep(long int time);
-
 
 /*-----------------MONITEUR-------------------*/
 void	*moniteur(void *d);
