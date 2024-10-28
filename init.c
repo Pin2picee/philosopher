@@ -6,7 +6,7 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 21:07:49 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/17 18:49:17 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/28 17:29:16 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ int	init_arg(int argc, char **argv, t_data *data)
 	int	i;
 
 	i = 0;
-	if (!init_arg_2(data, argv, argc))
-		return (ft_printf("probleme avec le nombre d'un argument !"), 0);
-	if (data->nb_philo > 200 || data->time_die < 60 || data->time_eat < 60 || data->time_sleep < 60)
-			return (ft_printf("probleme avec le temps d'un argument !"), 0);
+	if (!init_arg_2(data, argv, argc)
+		|| data->nb_philo > 200 || data->time_die < 60
+		|| data->time_eat < 60 || data->time_sleep < 60)
+		return (ft_printf("probleme avec les arguments !"), 0);
 	if (argc == 6)
 		data->nb_eat = ft_atoi(argv[5]);
 	else
@@ -51,7 +51,7 @@ int	init_arg(int argc, char **argv, t_data *data)
 	data->philosopher = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philosopher)
 		return (free(data->mutex), 0);
-	while (i < data->nb_philo)//init des mutex------
+	while (i < data->nb_philo)
 	{
 		data->philosopher[i].data = data;
 		pthread_mutex_init(&data->mutex[i], NULL);
@@ -59,48 +59,4 @@ int	init_arg(int argc, char **argv, t_data *data)
 	}
 	pthread_mutex_init(&data->m_write, NULL);
 	return (1);
-}
-
-void	ft_join_thread(t_philo *philo)
-{
-	int	i;
-	
-	i = 0;
-	while (i < philo->data->nb_philo)
-	{
-		pthread_join(philo[i].thread, NULL);
-		i++;
-	}
-	pthread_join(philo->data->moniteur, NULL);
-	return ;
-}
-
-void	init_philosopher(t_philo *philo)
-{
-	int	i;
-	
-	i = 0;
-	while (i < philo->data->nb_philo)
-	{
-		philo[i].m_write = &philo->data->m_write;
-		philo[i].id = i;
-		philo[i].fork = &philo->data->mutex[i];
-		if ((i + 1) == philo->data->nb_philo )
-			philo[i].fork_left = &philo->data->mutex[0];
-		else
-			philo[i].fork_left = &philo->data->mutex[i + 1];
-		i++;
-	}
-	i = 0;
-	philo->data->start_time = get_time();
-	pthread_mutex_init(&philo->data->mutex_time_eat, NULL); 
-	pthread_mutex_init(&philo->data->mutex_flag_die, NULL); 
-	philo->data->flag_die = false;
-	while (i < philo->data->nb_philo)
-	{
-		pthread_create(&philo[i].thread, NULL, ft_routine, &philo[i]);
-		i++;
-	}
-	pthread_create(&philo->data->moniteur, NULL, moniteur, philo->data);
-	ft_join_thread(philo);
 }

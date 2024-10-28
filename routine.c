@@ -6,30 +6,17 @@
 /*   By: abelmoha <abelmoha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 21:50:11 by abelmoha          #+#    #+#             */
-/*   Updated: 2024/10/17 19:40:24 by abelmoha         ###   ########.fr       */
+/*   Updated: 2024/10/28 17:57:13 by abelmoha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-
-int	check_die(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->data->mutex_flag_die);
-	if (philo->data->flag_die == true)
-	{
-		pthread_mutex_unlock(&philo->data->mutex_flag_die);
-		return (1);
-	}
-	pthread_mutex_unlock(&philo->data->mutex_flag_die);
-	return (0);
-}
-
 void	take_fork(t_philo *philo)
 {
 	if (check_die(philo))
 		return ;
-	if ((philo->id + 1) % 2 != 0) // impair
+	if ((philo->id + 1) % 2 != 0)
 	{
 		pthread_mutex_lock(philo->fork);
 		ft_write_what(TAKE_FORK_R, philo);
@@ -38,12 +25,13 @@ void	take_fork(t_philo *philo)
 	}
 	else
 	{
-		pthread_mutex_lock(philo->fork_left); // pair
+		pthread_mutex_lock(philo->fork_left);
 		ft_write_what(TAKE_FORK_L, philo);
 		pthread_mutex_lock(philo->fork);
 		ft_write_what(TAKE_FORK_R, philo);
 	}
 }
+
 void	ft_last_time_eat(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->mutex_time_eat);
@@ -69,7 +57,6 @@ void	eat_philo(t_philo *philo)
 	pthread_mutex_unlock(philo->fork_left);
 }
 
-
 void	sleep_philo(t_philo *philo)
 {
 	if (check_die(philo))
@@ -86,25 +73,27 @@ void	sleep_philo(t_philo *philo)
 
 void	*ft_routine(void *p)
 {
-	int	i;
-	t_philo *philo;
-	
+	int		i;
+	t_philo	*philo;
+
 	philo = (t_philo *)p;
-	// chaque philo rentre dans sa fonction routine alterne entre manger et dormir
 	i = 0;
-	pthread_mutex_lock(&philo->data->mutex_time_eat);
-	philo->last_time_eat = get_time();
-	pthread_mutex_unlock(&philo->data->mutex_time_eat);
 	if ((philo->id % 2) == 0)
-		ft_usleep(200);
+		ft_usleep(philo->data->time_eat / 10);
 	while (i != philo->data->nb_eat)
 	{
 		if (check_die(philo))
-			break;
+			break ;
 		eat_philo(philo);
+		if (check_die(philo))
+			break ;
 		sleep_philo(philo);
+		if (check_die(philo))
+			break ;
 		i++;
 	}
 	ft_write_what("\x1b[1mMIAM MIAM, trop bonnnn\x1b[0m", philo);
+	if (i == philo->data->nb_eat && philo->data->flag_finish == false)
+		philo->data->flag_finish = true;
 	return (NULL);
 }
