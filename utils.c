@@ -35,7 +35,7 @@ void	ft_write_what(char *str, t_philo *philo)
 }
 
 void	ft_write_die(char *str, t_philo *philo)
-{	
+{
 	pthread_mutex_lock(&philo->data->m_write);
 	if (check_die(philo))
 	{
